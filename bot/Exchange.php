@@ -185,15 +185,23 @@ abstract class Exchange {
 
     static $previousNonce = array( );
     $id = $this->getID();
+    $name = $this->getName();
     if ( !isset( $previousNonce[ $id ] ) ) {
       $previousNonce[ $id ] = 0;
     }
 
+    $msg = "Generating nonce for $name, previousNonce = ${previousNonce[$id]}, ";
+
     // Try the current time, if we're getting called too fast, step up one by one.
     $nonce = floor( microtime( true ) * 1000000);
+    $msg .= "none = $nonce";
     if ( $nonce <= $previousNonce[ $id ] ) {
       $nonce = $previousNonce[ $id ] + 1;
+      $msg .= " ($nonce)";
     }
+
+    $msg .= "\n";
+    logg( $msg );
 
     $previousNonce[ $id ] = $nonce;
     return $nonce;
